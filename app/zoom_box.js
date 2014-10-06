@@ -11,11 +11,9 @@ App.directive('zoomBox', function($document, $window) {
 
 			var content = element.children('div');
 
-			var scale = 0;
+			var pan = Victor(0, 0);
 
-			var mouse = Victor(0, 0);
-
-			var isFullscreen = false;
+			var zoom = 0;
 
 			function update() {
 
@@ -24,36 +22,28 @@ App.directive('zoomBox', function($document, $window) {
 
 				var elementSize = Victor(element[0].offsetWidth, element[0].offsetHeight);
 				var contentSize = Victor(content[0].offsetWidth, content[0].offsetHeight);
-				var minScale = Math.max(elementSize.x / contentSize.x, elementSize.y / contentSize.y);
+				var minZoom = Math.max(elementSize.x / contentSize.x, elementSize.y / contentSize.y);
 
-				// Limit scale
-				scale = Math.min(Math.max(scale, minScale), 1);
-
-				// Force redraw
-				scale += (Math.random() - 0.5) / 10000000;
+				// Limit zoom
+				zoom = Math.min(Math.max(zoom, minZoom), 1);
 
 				// Convert to element coordinates
-				contentSize.multiply(Victor(scale, scale));
+				contentSize.multiply(Victor(zoom, zoom));
 
 				// Center content
-				var translate = elementSize.clone()
-					.subtract(contentSize)
-					.multiply(Victor(0.5, 0.5));
+				var translate = elementSize.clone().subtract(contentSize).multiply(Victor(0.5, 0.5));
 
 				// Apply panning
 				var availablePan = contentSize.clone().subtract(elementSize);
-				var panAmount = mouse.clone().divide(elementSize).subtract(Victor(0.5, 0.5));
 				availablePan.x = Math.max(availablePan.x, 0);
 				availablePan.y = Math.max(availablePan.y, 0);
-				translate.subtract(availablePan.multiply(panAmount));
+				translate.subtract(availablePan.multiply(pan));
 
 				// Convert back to content coordinates
-				translate.divide(Victor(scale, scale));
+				translate.divide(Victor(zoom, zoom));
 
 				content.css({
-					transform:
-						'scale(' + scale + ') ' +
-						'translate(' + translate.x + 'px, ' + translate.y + 'px)',
+					transform: 'scale(' + zoom + ') translate3d(' + translate.x + 'px, ' + translate.y + 'px, 0)',
 					'transform-origin': '0% 0%'
 				});
 			}
@@ -61,7 +51,8 @@ App.directive('zoomBox', function($document, $window) {
 			$window.requestAnimationFrame(update);
 
 			element.on('click', function(event) {
-				if (!isFullscreen) {
+				zoom = 0;
+				if (document.webkitFullscreenElement === null) {
 					event.currentTarget.webkitRequestFullscreen();
 				} else if (document.webkitFullscreenElement === event.currentTarget) {
 					document.webkitExitFullscreen();
@@ -69,29 +60,25 @@ App.directive('zoomBox', function($document, $window) {
 			});
 
 			element.on('mousemove', function(event) {
-				mouse.x = event.layerX;
-				mouse.y = event.layerY;
+				pan.x = (event.layerX / event.currentTarget.offsetWidth) - 0.5;
+				pan.y = (event.layerY / event.currentTarget.offsetHeight) - 0.5;
 				update();
 			});
 
 			element.on('mousewheel', function(event) {
 				event.preventDefault();
 				event.stopPropagation();
-				scale -= event.wheelDelta / 4000;
+				zoom -= event.wheelDelta / 4000;
 				update();
 			});
 
-			$document.on('webkitfullscreenchange', function() {
-				isFullscreen = document.webkitFullscreenElement === element[0];
-				scale = isFullscreen ? scale : 0;
-				update();
-			});
+			$document.on('webkitfullscreenchange', update);
 
 			angular.element($window).on('resize', update);
 
 			element.on('$destroy', function() {
 				element.off();
-				$document.off('webkitfullscreenchange');
+				$document.off('webkitfullscreenchange', update);
 				angular.element($window).off('resize', update);
 			});
 

@@ -78,6 +78,6 @@
 	"globals"       : {         // additional predefined global variables
 		"angular" : false,
 		"Victor"  : false,
-		"App"  : false
+		"App"     : false
 	}
 }
