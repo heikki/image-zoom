@@ -1,0 +1,30 @@
+{
+  "name": "image-zoom",
+  "version": "0.1.0",
+  "private": true,
+  "engineStrict": true,
+  "engines": {
+    "node": ">= 0.9"
+  },
+  "scripts": {
+    "start": "node_modules/.bin/gulp"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "del": "*",
+    "express": "*",
+    "gulp": "*",
+    "gulp-cached": "*",
+    "gulp-concat": "*",
+    "gulp-jade": "*",
+    "gulp-plumber": "*",
+    "gulp-stylus": "*",
+    "gulp-util": "*",
+    "main-bower-files": "*",
+    "morgan": "*",
+    "nib": "*",
+    "open": "*",
+    "run-sequence": "*",
+    "tiny-lr": "*"
+  }
+}

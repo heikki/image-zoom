@@ -1,0 +1,9 @@
+{
+  "name": "image-zoom",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.2.26",
+    "victor": "~0.2.6"
+  },
+  "overrides": {}
+}

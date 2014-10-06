@@ -1,0 +1,14 @@
+doctype
+html(ng-app="image-zoom")
+	head
+		meta(charset="utf-8")
+		title Image zoom
+		link(rel="stylesheet", href="/styles/all.css")
+		script(src="/scripts/vendor.js")
+		script(src="/scripts/all.js")
+	body(ng-controller="MainCtrl as main")
+
+		zoom-box
+			img(src="/images/test.jpg")
+
+		small Click &rarr; fullscreen, mousewheel &rarr; zoom, webkit only for now
