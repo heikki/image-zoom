@@ -8,7 +8,8 @@ html(ng-app="image-zoom")
 		script(src="/scripts/all.js")
 	body(ng-controller="MainCtrl as main")
 
-		zoom-box
-			img(src="/images/test.jpg")
+		image-zoom(image="/images/{{ main.image }}")
 
 		small Click &rarr; fullscreen, mousewheel &rarr; zoom, webkit only for now
+
+		button(ng-click="main.changeImage()") Change image
