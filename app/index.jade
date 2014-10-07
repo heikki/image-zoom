@@ -9,7 +9,10 @@ html(ng-app="image-zoom")
 	body(ng-controller="MainCtrl as main")
 
 		image-zoom(image="/images/{{ main.image }}")
-
 		small Click &rarr; fullscreen, mousewheel &rarr; zoom, webkit only for now
-
 		button(ng-click="main.changeImage()") Change image
+
+		br
+		br
+
+		image-zoom(left="/images/test-left.jpg", right="/images/test-right.jpg")
