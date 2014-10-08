@@ -22,7 +22,6 @@
     "gulp-plumber": "*",
     "gulp-sourcemaps": "*",
     "gulp-stylus": "*",
-    "gulp-util": "*",
     "main-bower-files": "*",
     "minimist": "*",
     "nib": "*",
