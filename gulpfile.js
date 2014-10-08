@@ -70,36 +70,31 @@ gulp.task('views', function() {
 		.pipe(gulp.dest(DEST));
 });
 
+gulp.task('data', function(cb) {
+	var files = fs.readdirSync(IMAGES).filter(function(filename) {
+		return filename.match(/\-(left|right).jpg$/);
+	}).map(function(filename) {
+		return filename.replace(/\-(left|right).jpg$/, '');
+	}).filter(function(filename, index, self) {
+		return self.indexOf(filename) === index;
+	});
+	fs.writeFileSync(DEST + '/images.json', JSON.stringify(files));
+	cb();
+});
+
 gulp.task('clean', function(cb) {
 	del([DEST], cb);
 });
 
 gulp.task('build', function(cb) {
-	runSequence('clean', ['vendor', 'scripts', 'styles', 'views'], cb);
+	runSequence('clean', ['vendor', 'scripts', 'styles', 'views'], 'data', cb);
 });
 
 gulp.task('default', ['build'], function() {
 	// Dev server
 	browserSync({
 		port: 4000,
-		server: {
-			baseDir: [DEST, IMAGES],
-			middleware: function(req, res, next) {
-				if (req.url !== '/images.json') {
-					next();
-					return;
-				}
-				var files = fs.readdirSync(IMAGES).filter(function(filename) {
-					return filename.match(/\-(left|right).jpg$/);
-				}).map(function(filename) {
-					return filename.replace(/\-(left|right).jpg$/, '');
-				}).filter(function(filename, index, self) {
-					return self.indexOf(filename) === index;
-				});
-				res.setHeader('Content-Type', 'application/json');
-				res.end(JSON.stringify(files));
-			}
-		},
+		server: { baseDir: [DEST, IMAGES] },
 		files: [ DEST + '/**/*.*', '!' + DEST + '/**/*.map' ],
 		logFileChanges: false,
 		notify: false
