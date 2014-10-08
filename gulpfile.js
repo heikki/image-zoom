@@ -3,7 +3,6 @@
 'use strict';
 
 var gulp           = require('gulp');
-var gutil          = require('gulp-util');
 var plugins        = require('gulp-load-plugins')();
 
 var fs             = require('fs');
@@ -30,14 +29,9 @@ var paths = {
 	views: 'app/**/*.jade'
 };
 
-function plumb(emitEnd) {
+function plumb() {
 	return plugins.plumber({
-		errorHandler: function(error) {
-			gutil.log(gutil.colors.red(error.message));
-			if (emitEnd) {
-				this.emit('end');
-			}
-		}
+		errorHandler: plugins.notify.onError()
 	});
 }
 
@@ -59,7 +53,7 @@ gulp.task('scripts', function() {
 
 gulp.task('styles', function() {
 	return gulp.src(paths.styles.src)
-		.pipe(plumb(true))
+		.pipe(plumb())
 		.pipe(plugins.stylus({
 			use: [ nib() ],
 			sourcemap: { inline: true, basePath: 'app' }
@@ -73,7 +67,7 @@ gulp.task('styles', function() {
 gulp.task('views', function() {
 	return gulp.src(paths.views)
 		.pipe(plugins.cached('views'))
-		.pipe(plumb(false))
+		.pipe(plumb())
 		.pipe(plugins.jade({ pretty: true }))
 		.pipe(gulp.dest(DEST));
 });
