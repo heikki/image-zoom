@@ -8,8 +8,6 @@ html(ng-app="image-zoom")
 		script(src="/scripts/all.js")
 	body(ng-controller="MainCtrl as main", ng-keydown="onKeydown($event)")
 
-		h3 {{ main.image }}
-
 		image-zoom(image="/{{ main.image }}-left.jpg")
 		small Click &rarr; fullscreen, mousewheel &rarr; zoom, webkit only for now
 
