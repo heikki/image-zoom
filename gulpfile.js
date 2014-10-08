@@ -60,8 +60,11 @@ gulp.task('scripts', function() {
 gulp.task('styles', function() {
 	return gulp.src(paths.styles.src)
 		.pipe(plumb(true))
-		.pipe(plugins.sourcemaps.init())
-		.pipe(plugins.stylus({ use: [ nib() ] }))
+		.pipe(plugins.stylus({
+			use: [ nib() ],
+			sourcemap: { inline: true, basePath: 'app' }
+		}))
+		.pipe(plugins.sourcemaps.init({ loadMaps: true }))
 		.pipe(plugins.concat('all.css'))
 		.pipe(plugins.sourcemaps.write('.'))
 		.pipe(gulp.dest(DEST + '/styles'));
