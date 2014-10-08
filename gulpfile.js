@@ -17,11 +17,14 @@ var morgan         = require('morgan');
 var tinylr         = require('tiny-lr');
 var mainBowerFiles = require('main-bower-files');
 var openBrowser    = require('open');
+var fs             = require('fs');
+// var minimist       = require('minimist');
 
 var buildDir = '.build';
 
+var IMAGE_PATH = process.env.IMAGE_PATH || 'assets/images';
+
 var paths = {
-	assets: 'assets/**/*',
 	vendor: mainBowerFiles(),
 	scripts: [
 		'app/index.js',
@@ -44,10 +47,6 @@ function plumb(emitEnd) {
 		}
 	});
 }
-
-gulp.task('assets', function() {
-	return gulp.src(paths.assets).pipe(gulp.dest(buildDir));
-});
 
 gulp.task('vendor', function() {
 	return gulp.src(paths.vendor)
@@ -82,7 +81,7 @@ gulp.task('clean', function(cb) {
 });
 
 gulp.task('build', function(cb) {
-	runSequence('clean', ['assets', 'vendor', 'scripts', 'styles', 'views'], cb);
+	runSequence('clean', ['vendor', 'scripts', 'styles', 'views'], cb);
 });
 
 gulp.task('default', ['build'], function() {
@@ -90,6 +89,17 @@ gulp.task('default', ['build'], function() {
 	var app = express();
 	app.use(morgan('dev'));
 	app.use(express.static(buildDir));
+	app.use(express.static(IMAGE_PATH));
+	app.get('/images.json', function(req, res) {
+		var files = fs.readdirSync(IMAGE_PATH).filter(function(filename) {
+			return filename.match(/\-(left|right).jpg$/);
+		}).map(function(filename) {
+			return filename.replace(/\-(left|right).jpg$/, '');
+		}).filter(function onlyUnique(value, index, self) {
+			return self.indexOf(value) === index;
+		});
+		res.json(files);
+	});
 	app.listen(4000);
 	// Livereload
 	var lr = tinylr();
