@@ -8,10 +8,10 @@ html(ng-app="image-zoom")
 		script(src="/scripts/all.js")
 	body(ng-controller="MainCtrl as main", ng-keydown="onKeydown($event)")
 
-		image-zoom(image="/{{ main.image }}-left.jpg")
+		image-zoom(image="/{{ main.image }}-left.jpg", ng-if="main.image")
 		small Click &rarr; fullscreen, mousewheel &rarr; zoom, webkit only for now
 
 		br
 		br
 
-		image-zoom(left="/{{ main.image }}-right.jpg", right="/{{ main.image }}-left.jpg")
+		image-zoom(left="/{{ main.image }}-right.jpg", right="/{{ main.image }}-left.jpg", ng-if="main.image")
