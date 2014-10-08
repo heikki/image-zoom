@@ -128,7 +128,7 @@ App.directive('imageZoomImage', function() {
 				translate.subtract(availablePan.multiply(scope.pan));
 
 				// Convert back to content coordinates
-				translate.divide(Victor(scope.zoom, scope.zoom));
+				translate.divide(Victor(scope.zoom, scope.zoom)).unfloat();
 
 				content.css({
 					transform: 'scale(' + scope.zoom + ') translate3d(' + translate.x + 'px, ' + translate.y + 'px, 0)',
