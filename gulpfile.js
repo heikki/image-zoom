@@ -1,4 +1,4 @@
-/* jshint node:true */
+/* jshint node:true, browser:false */
 
 'use strict';
 
@@ -29,12 +29,6 @@ var paths = {
 	views: 'app/**/*.jade'
 };
 
-function plumb() {
-	return plugins.plumber({
-		errorHandler: plugins.notify.onError()
-	});
-}
-
 gulp.task('vendor', function() {
 	return gulp.src(paths.vendor)
 		.pipe(plugins.sourcemaps.init())
@@ -53,9 +47,11 @@ gulp.task('scripts', function() {
 
 gulp.task('styles', function() {
 	return gulp.src(paths.styles.src)
-		.pipe(plumb())
+		.pipe(plugins.plumber({
+			errorHandler: plugins.notify.onError()
+		}))
 		.pipe(plugins.stylus({
-			use: [ nib() ],
+			use: nib(),
 			sourcemap: { inline: true, basePath: 'app' }
 		}))
 		.pipe(plugins.sourcemaps.init({ loadMaps: true }))
@@ -67,7 +63,9 @@ gulp.task('styles', function() {
 gulp.task('views', function() {
 	return gulp.src(paths.views)
 		.pipe(plugins.cached('views'))
-		.pipe(plumb())
+		.pipe(plugins.plumber({
+			errorHandler: plugins.notify.onError()
+		}))
 		.pipe(plugins.jade({ pretty: true }))
 		.pipe(gulp.dest(DEST));
 });
