@@ -11,21 +11,20 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "browser-sync": "*",
     "del": "*",
-    "express": "*",
     "gulp": "*",
     "gulp-cached": "*",
     "gulp-concat": "*",
+    "gulp-load-plugins": "*",
     "gulp-jade": "*",
     "gulp-plumber": "*",
+    "gulp-sourcemaps": "*",
     "gulp-stylus": "*",
     "gulp-util": "*",
     "main-bower-files": "*",
     "minimist": "*",
-    "morgan": "*",
     "nib": "*",
-    "open": "*",
-    "run-sequence": "*",
-    "tiny-lr": "*"
+    "run-sequence": "*"
   }
 }

@@ -4,25 +4,18 @@
 
 var gulp           = require('gulp');
 var gutil          = require('gulp-util');
-var jade           = require('gulp-jade');
-var stylus         = require('gulp-stylus');
-var concat         = require('gulp-concat');
-var cached         = require('gulp-cached');
-var plumber        = require('gulp-plumber');
-var runSequence    = require('run-sequence');
+var plugins        = require('gulp-load-plugins')();
+
+var fs             = require('fs');
 var del            = require('del');
 var nib            = require('nib');
-var express        = require('express');
-var morgan         = require('morgan');
-var tinylr         = require('tiny-lr');
-var mainBowerFiles = require('main-bower-files');
-var openBrowser    = require('open');
-var fs             = require('fs');
 var minimist       = require('minimist');
+var runSequence    = require('run-sequence');
+var browserSync    = require('browser-sync');
+var mainBowerFiles = require('main-bower-files');
 
-var buildDir = '.build';
-
-var IMAGE_PATH = minimist(process.argv.slice(2)).images || 'assets';
+var DEST = '.build';
+var IMAGES = minimist(process.argv.slice(2)).images || 'assets';
 
 var paths = {
 	vendor: mainBowerFiles(),
@@ -38,7 +31,7 @@ var paths = {
 };
 
 function plumb(emitEnd) {
-	return plumber({
+	return plugins.plumber({
 		errorHandler: function(error) {
 			gutil.log(gutil.colors.red(error.message));
 			if (emitEnd) {
@@ -50,34 +43,40 @@ function plumb(emitEnd) {
 
 gulp.task('vendor', function() {
 	return gulp.src(paths.vendor)
-		.pipe(concat('vendor.js'))
-		.pipe(gulp.dest(buildDir + '/scripts'));
+		.pipe(plugins.sourcemaps.init())
+		.pipe(plugins.concat('vendor.js'))
+		.pipe(plugins.sourcemaps.write('.'))
+		.pipe(gulp.dest(DEST + '/scripts'));
 });
 
 gulp.task('scripts', function() {
 	return gulp.src(paths.scripts)
-		.pipe(concat('all.js'))
-		.pipe(gulp.dest(buildDir + '/scripts'));
+		.pipe(plugins.sourcemaps.init())
+		.pipe(plugins.concat('all.js'))
+		.pipe(plugins.sourcemaps.write('.'))
+		.pipe(gulp.dest(DEST + '/scripts'));
 });
 
 gulp.task('styles', function() {
 	return gulp.src(paths.styles.src)
 		.pipe(plumb(true))
-		.pipe(stylus({ use: [ nib() ] }))
-		.pipe(concat('all.css'))
-		.pipe(gulp.dest(buildDir + '/styles'));
+		.pipe(plugins.sourcemaps.init())
+		.pipe(plugins.stylus({ use: [ nib() ] }))
+		.pipe(plugins.concat('all.css'))
+		.pipe(plugins.sourcemaps.write('.'))
+		.pipe(gulp.dest(DEST + '/styles'));
 });
 
 gulp.task('views', function() {
 	return gulp.src(paths.views)
-		.pipe(cached('views'))
+		.pipe(plugins.cached('views'))
 		.pipe(plumb(false))
-		.pipe(jade({ pretty: true }))
-		.pipe(gulp.dest(buildDir));
+		.pipe(plugins.jade({ pretty: true }))
+		.pipe(gulp.dest(DEST));
 });
 
 gulp.task('clean', function(cb) {
-	del([buildDir], cb);
+	del([DEST], cb);
 });
 
 gulp.task('build', function(cb) {
@@ -86,31 +85,32 @@ gulp.task('build', function(cb) {
 
 gulp.task('default', ['build'], function() {
 	// Dev server
-	var app = express();
-	app.use(morgan('dev'));
-	app.use(express.static(buildDir));
-	app.use(express.static(IMAGE_PATH));
-	app.get('/images.json', function(req, res) {
-		var files = fs.readdirSync(IMAGE_PATH).filter(function(filename) {
-			return filename.match(/\-(left|right).jpg$/);
-		}).map(function(filename) {
-			return filename.replace(/\-(left|right).jpg$/, '');
-		}).filter(function onlyUnique(value, index, self) {
-			return self.indexOf(value) === index;
-		});
-		res.json(files);
+	browserSync({
+		port: 4000,
+		server: {
+			baseDir: [DEST, IMAGES],
+			middleware: function(req, res, next) {
+				if (req.url !== '/images.json') {
+					next();
+					return;
+				}
+				var files = fs.readdirSync(IMAGES).filter(function(filename) {
+					return filename.match(/\-(left|right).jpg$/);
+				}).map(function(filename) {
+					return filename.replace(/\-(left|right).jpg$/, '');
+				}).filter(function(filename, index, self) {
+					return self.indexOf(filename) === index;
+				});
+				res.setHeader('Content-Type', 'application/json');
+				res.end(JSON.stringify(files));
+			}
+		},
+		files: [ DEST + '/**/*.*', '!' + DEST + '/**/*.map' ],
+		logFileChanges: false,
+		notify: false
 	});
-	app.listen(4000);
-	// Livereload
-	var lr = tinylr();
-	lr.listen(35729);
-	gulp.watch(buildDir + '/**/*.*', function(event) {
-		lr.changed({ body: { files: [ event.path ] } });
-	});
-	// Watch
+	// Watch & run tasks
 	Object.keys(paths).forEach(function(key) {
 		gulp.watch(paths[key].watch || paths[key], [key]);
 	});
-	// Open browser
-	openBrowser('http://localhost:4000');
 });
