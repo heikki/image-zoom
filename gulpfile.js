@@ -15,7 +15,7 @@ var browserSync    = require('browser-sync');
 var mainBowerFiles = require('main-bower-files');
 
 var DEST = '.build';
-var IMAGES = minimist(process.argv.slice(2)).images || 'assets';
+var IMAGES = minimist(process.argv).images || 'assets';
 
 var paths = {
 	vendor: mainBowerFiles(),
