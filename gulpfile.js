@@ -78,8 +78,7 @@ gulp.task('data', function(cb) {
 	}).filter(function(filename, index, self) {
 		return self.indexOf(filename) === index;
 	});
-	fs.writeFileSync(DEST + '/images.json', JSON.stringify(files));
-	cb();
+	fs.writeFile(DEST + '/images.json', JSON.stringify(files), cb);
 });
 
 gulp.task('clean', function(cb) {
