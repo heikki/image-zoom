@@ -18,10 +18,11 @@ var tinylr         = require('tiny-lr');
 var mainBowerFiles = require('main-bower-files');
 var openBrowser    = require('open');
 var fs             = require('fs');
+var minimist       = require('minimist');
 
 var buildDir = '.build';
 
-var IMAGE_PATH = process.env.IMAGE_PATH || 'assets';
+var IMAGE_PATH = minimist(process.argv.slice(2)).images || 'assets';
 
 var paths = {
 	vendor: mainBowerFiles(),

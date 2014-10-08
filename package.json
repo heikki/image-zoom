@@ -21,6 +21,7 @@
     "gulp-stylus": "*",
     "gulp-util": "*",
     "main-bower-files": "*",
+    "minimist": "*",
     "morgan": "*",
     "nib": "*",
     "open": "*",

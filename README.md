@@ -5,6 +5,12 @@ npm install
 gulp
 ```
 
+or
+
+```
+gulp --images=../mpo-conversion/converted/separate/
+```
+
 ## Links
 
 http://victorjs.org
