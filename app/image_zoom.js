@@ -19,6 +19,7 @@ App.directive('imageZoom', function($document, $window) {
 			if (attrs.image) {
 				return templates.mono;
 			} else if (attrs.left && attrs.right) {
+				attrs.mode = attrs.mode || 'cross-eye';
 				return templates.stereo;
 			}
 		},

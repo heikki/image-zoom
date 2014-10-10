@@ -10,7 +10,7 @@ html(ng-app="image-zoom")
 
 		//- image-zoom(image="/{{ main.image }}-left.jpg", ng-if="main.image")
 
-		image-zoom(left="/{{ main.image }}-left.jpg", right="/{{ main.image }}-right.jpg", mode="{{ main.mode }}", ng-if="main.image")
+		image-zoom(left="{{ main.image }}-left.jpg", right="{{ main.image }}-right.jpg", mode="{{ main.mode }}", ng-if="main.image")
 
 		small
 			| Click &rarr; fullscreen,
