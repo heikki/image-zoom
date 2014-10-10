@@ -14,4 +14,4 @@ html(ng-app="image-zoom")
 		br
 		br
 
-		image-zoom(left="/{{ main.image }}-right.jpg", right="/{{ main.image }}-left.jpg", ng-if="main.image")
+		image-zoom(left="/{{ main.image }}-left.jpg", right="/{{ main.image }}-right.jpg", mode="{{ main.mode }}", ng-if="main.image")

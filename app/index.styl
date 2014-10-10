@@ -39,3 +39,22 @@ small
 
 		.image-zoom-image
 			height: 100% !important
+
+	&[mode="cross-eye"]
+
+		.image-zoom-image:first-child
+			transform: translate3d(100%, 0, 0)
+
+		.image-zoom-image:last-child
+			transform: translate3d(-100%, 0, 0)
+
+	&[mode="3d-tv"]:-webkit-full-screen
+
+		.image-zoom-image
+			width: 100% !important
+
+		.image-zoom-image:first-child
+			transform: scale(0.5, 1) translate3d(-50%, 0%, 0)
+
+		.image-zoom-image:last-child
+			transform: scale(0.5, 1) translate3d(50%, -100%, 0)
