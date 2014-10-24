@@ -52,7 +52,7 @@ App.directive('imageZoom', function($document, $window) {
 					if (event.type === 'mousewheel') {
 						event.preventDefault();
 						event.stopPropagation();
-						scope.zoom -= event.wheelDelta / 4000;
+						scope.zoom += event.wheelDelta / 4000;
 					}
 				});
 			});
