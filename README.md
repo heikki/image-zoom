@@ -8,7 +8,7 @@ gulp
 or
 
 ```
-gulp --images=../mpo-conversion/converted/separate/
+gulp --images=../mpo-conversion/converted/
 ```
 
 ## Links
